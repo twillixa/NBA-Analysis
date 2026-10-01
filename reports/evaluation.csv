@@ -1,0 +1,8 @@
+,R2,MAE_wins,Rank_MAE,Leader_hits,Seasons,Leader_top3
+"Random forest, in-sample (report cleaning)",0.893,3.265,2.133,11.0,16.0,16.0
+"Random forest, walk-forward (report cleaning)",0.419,7.492,5.396,3.0,16.0,10.0
+"OLS, walk-forward (report cleaning)",0.503,7.029,4.442,7.0,16.0,12.0
+"Random forest, in-sample (corrected)",0.894,3.281,2.162,12.0,16.0,16.0
+"Random forest, walk-forward (corrected)",0.417,7.495,5.583,4.0,16.0,9.0
+"OLS, walk-forward (corrected)",0.499,7.078,4.521,7.0,16.0,12.0
+Baseline: repeat last season,0.229,8.409,5.733,5.0,16.0,8.0
