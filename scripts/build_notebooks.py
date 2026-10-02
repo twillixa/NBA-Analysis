@@ -161,7 +161,7 @@ ols.params[significant.index].round(2).sort_values()'''),
 4. Aggregate to teams, predict win % with a forest trained on all 630 team-seasons, convert to wins and rebalance so the league sums to 1,230.
 
 **The report's run** (reproduced first) had three problems in steps 1-2:
-- 118 roster names didn't match the stats history (typos such as "Kari-Anthony Towns" and "Mikai Bridges", missing accents such as Şengün and Porziņģis, and a trailing space after "Victor Wembanyama"). All of them got the 10-point rookie line.
+- 118 of 522 roster names didn't match the stats history, and all got the 10-point rookie line. 82 are genuine newcomers (2025 draftees and others), but 36 are established players lost to typos such as "Kari-Anthony Towns" and "Mikai Bridges", missing accents such as Şengün and Porziņģis, and a trailing space after "Victor Wembanyama".
 - The projection regressions were trained on the 2026 rows themselves, whose stats are all zero.
 - Second- and third-year players had their missing seasons filled with zeros."""),
     (code, '''report_forecast = m.forecast_2026(players, standings, load_roster_2026())
@@ -234,7 +234,7 @@ This flips one of the report's conclusions (random forest > OLS). Choosing the m
 
 | Issue | Effect | Fix |
 |---|---|---|
-| 2026 roster names didn't match the history (whitespace, typos, accents) | 118 of 522 players, including Wembanyama, Towns and Bridges, projected with the rookie line | `load_roster_2026(match_names=True)` |
+| 2026 roster names didn't match the history (whitespace, typos, accents) | 36 established players, including Wembanyama, Towns and Bridges, projected with the rookie line (118 of 522 unmatched in all; the other 82 are genuine newcomers) | `load_roster_2026(match_names=True)` |
 | Projection regressions trained on the all-zero 2026 rows | projected stats biased toward 0 | `forecast_2026(fixes=True)` |
 | Missing lag seasons filled with 0 | 2nd/3rd-year players under-projected | `fixes=True` (reuse latest season) |
 | "Points per attempt" averaged players' shooting % | non-shooters count as 0% from three; twos looked better every season | `expected_points(weighted=True)` |

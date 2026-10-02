@@ -73,7 +73,7 @@ the code, so the [report's numbers are still reproducible](notebooks/02_model_an
 
 | Issue in the original | Effect | Fixed result |
 |---|---|---|
-| 118 of 522 names on the 2025-26 rosters didn't match the stats history (typos, missing accents, a trailing space after "Victor Wembanyama") | Wembanyama, Towns, Bridges, Şengün and others projected as 10-point rookies | Forecast leader unchanged (OKC). Cleveland drops from 54 to 51 wins |
+| 36 established players on the 2025-26 rosters didn't match their stats history (typos, missing accents, a trailing space after "Victor Wembanyama"). With the 82 genuine newcomers, 118 of 522 names were unmatched | Wembanyama, Towns, Bridges, Şengün and others projected as 10-point rookies | Forecast leader unchanged (OKC). Cleveland drops from 54 to 51 wins |
 | Player projections trained on the all-zero 2026 rows | projected stats biased toward zero | trained on real seasons only |
 | Points per attempt averaged players' shooting percentages | players with no threes count as 0% shooters, so twos looked better in every season | threes were worth more until 2021 |
 | Traded players' season totals kept as a pseudo-team | league averages double-counted traded players | small shifts (3PA growth +171% → +175%) |
