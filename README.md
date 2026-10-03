@@ -1,25 +1,28 @@
 # Predicting the NBA regular season from box scores
 
-**Can 20 years of player stats tell you who will finish first?** This project cleans 21 seasons of
+**Can two decades of player stats tell you who will finish first?** This project cleans 21 seasons of
 Basketball-Reference data, finds which statistics actually move with winning, and trains a random
 forest and an OLS regression to forecast the **2025-26 standings**. It then checks how much of that
 accuracy survives on seasons the model has never seen.
+
+> 4-person HEC Lausanne course project (2025). In the group I worked on data cleaning, modeling and
+> visualization; in 2026 I rebuilt and audited the analysis on my own. Credits: [Team](#team).
 
 ![Python](https://img.shields.io/badge/Python-3.9+-3776AB?logo=python&logoColor=white)
 ![pandas](https://img.shields.io/badge/pandas-150458?logo=pandas&logoColor=white)
 ![scikit-learn](https://img.shields.io/badge/scikit--learn-F7931E?logo=scikitlearn&logoColor=white)
 ![statsmodels](https://img.shields.io/badge/statsmodels-4051B5)
-![tests](https://img.shields.io/badge/tests-33%20passing-1baf7a)
+[![tests](https://github.com/twillixa/NBA-Analysis/actions/workflows/tests.yml/badge.svg)](https://github.com/twillixa/NBA-Analysis/actions/workflows/tests.yml)
 
 <p align="center"><img src="figures/forecast_2026.png" width="560" alt="Bar chart of predicted 2025-26 wins for all 30 teams: Oklahoma City leads with 55, Orlando last with 28; tick marks show the original report's forecast"></p>
 
 | | |
 |---|---|
 | **Data** | 10,473 player-seasons and 630 team-seasons, 2004-05 to 2024-25 |
-| **Forecast** | Oklahoma City has the best record (55-27), followed by Milwaukee (52) and Cleveland, the Clippers and Detroit (51). The original report had Cleveland and Oklahoma City tied at 54 |
+| **Forecast** (corrected data) | Oklahoma City has the best record (55-27), followed by Milwaukee (52) and Cleveland, the Clippers and Detroit (51). The original report had Cleveland and Oklahoma City tied at 54 |
 | **Best predictor** | Having an All-NBA player from last season (27.7% of random-forest importance) |
 | **Reported accuracy** | Random forest R² 0.44 on a random hold-out. It picks the league leader in 13 of 20 seasons, but only when scored on seasons it was trained on |
-| **Honest accuracy** | Trained only on past seasons, OLS reaches R² 0.50 and picks 7 of 16 leaders. The random forest reaches 0.42 and 3 of 16, and a "repeat last season" baseline 0.23 and 5 of 16 |
+| **Out-of-sample fit** (report's data cleaning) | Trained only on past seasons, OLS reaches R² 0.50 and picks 7 of 16 leaders, the random forest 0.42 and 3 of 16. Each season is explained from its own box scores, so this measures fit on unseen seasons, not pre-season forecasting |
 
 ---
 
@@ -31,7 +34,7 @@ accuracy survives on seasons the model has never seen.
 <td width="50%"><img src="figures/awards.png" alt="Average win percentage by best prior-season award on the roster"></td>
 </tr>
 <tr>
-<td><b>Star power and ball security matter most.</b> Last season's All-NBA (+0.51) and MVP-vote (+0.48) players correlate most strongly with win %. Turnovers (−0.45) and fouls (−0.35) hurt. Raw points and rebounds correlate <i>negatively</i> because scoring inflated across eras.</td>
+<td><b>Star power and ball security matter most.</b> Last season's All-NBA (+0.51) and MVP-vote (+0.48) players correlate most strongly with win %. Turnovers (−0.45) and fouls (−0.35) hurt. Raw points and rebounds per player even correlate slightly <i>negatively</i>, and that holds within seasons, so it is not just scoring inflation across eras.</td>
 <td><b>A prior-season MVP is worth about +.250 in win %.</b> Teams with last year's MVP averaged a .694 win %, versus .438 for teams with no prior-season award winner. This is why lagged awards are model features.</td>
 </tr>
 <tr>
@@ -55,15 +58,21 @@ accuracy survives on seasons the model has never seen.
 ## How good is the forecast, really?
 
 The original report scored its leader predictions with a model trained on those same seasons.
-[Notebook 3](notebooks/03_out_of_sample_audit.ipynb) re-scores it with a **walk-forward backtest**:
+[Notebook 3](notebooks/03_out_of_sample_audit.ipynb) re-scores it with a **walk-forward test**:
 for every season from 2010 to 2025, the models are trained only on earlier seasons.
 
-<p align="center"><img src="figures/evaluation.png" width="820" alt="R squared and correct first-seed counts for in-sample random forest, walk-forward random forest, walk-forward OLS and a repeat-last-season baseline"></p>
+What this measures: each test season is predicted from its **own** box scores, so it shows how well the
+models *explain* wins on seasons they never saw. It is not a pre-season forecast test, which would
+first have to project the season's stats (as the 2025-26 forecast does).
 
-- **Most of the forest's in-sample accuracy is memorisation.** On unseen seasons it picks fewer
-  league leaders than simply repeating last season's standings.
-- **The simpler OLS generalises better**, which reverses one of the report's conclusions.
-- **Box scores and prior awards still carry real signal.** On R², win error and rank error, both models clearly beat the baseline.
+<p align="center"><img src="figures/evaluation.png" width="820" alt="R squared and correct first-seed counts for in-sample random forest, walk-forward random forest and walk-forward OLS, with a repeat-last-season reference"></p>
+
+- **Most of the forest's in-sample accuracy is memorisation.** Its R² falls from 0.89 on seasons it
+  was trained on to 0.42 on unseen ones.
+- **The simpler OLS generalises better** (R² 0.50, 7 of 16 leaders vs 3), which reverses the report's
+  choice of model.
+- **The "repeat last season" bars are a reference, not a fair benchmark.** That rule only uses
+  pre-season information, while both models see the season's own box scores.
 
 ## Audit: what changed from the original analysis
 
@@ -77,7 +86,7 @@ the code, so the [report's numbers are still reproducible](notebooks/02_model_an
 | Player projections trained on the all-zero 2026 rows | projected stats biased toward zero | trained on real seasons only |
 | Points per attempt averaged players' shooting percentages | players with no threes count as 0% shooters, so twos looked better in every season | threes were worth more until 2021 |
 | Traded players' season totals kept as a pseudo-team | league averages double-counted traded players | small shifts (3PA growth +171% → +175%) |
-| Model scored on its own training seasons | 13/20 leaders looked like forecasting skill | walk-forward backtest above |
+| Model scored on its own training seasons | 13/20 leaders looked like forecasting skill | walk-forward test above |
 
 The full list, including the True Shooting formula and award parsing, is in the
 [audit log](notebooks/03_out_of_sample_audit.ipynb). None of the fixes changes the evaluation results by more
@@ -144,6 +153,7 @@ compiled by the team.
 - Players are matched by name. Basketball-Reference player IDs would be more robust.
 - Next steps:
   - choose models by walk-forward error
+  - backtest the full pipeline: project each season from the three before it, then predict
   - add possession-based (pace-adjusted) offense and defense ratings
   - score the 2025-26 forecast against the final standings
 
@@ -154,4 +164,6 @@ Mohamed Ben Moctar, Mizuki Oelhafen and Mahdere Tesfamichael**. The original Col
 [maadmaaax/Project_NBA_GroupM](https://github.com/maadmaaax/Project_NBA_GroupM). This repository is a
 tested, modular port of them, with the out-of-sample evaluation and the fixes above added.
 
-Code is released under the [MIT License](LICENSE).
+Code is released under the [MIT License](LICENSE). Data in `data/raw/` was downloaded from
+[Basketball-Reference](https://www.basketball-reference.com) and remains subject to Sports Reference's
+terms of use; it is not covered by the license.

@@ -1,6 +1,7 @@
 [tool.pytest.ini_options]
 pythonpath = ["src"]
-filterwarnings = ["ignore::pandas.errors.SettingWithCopyWarning", "ignore::FutureWarning"]
+filterwarnings = ["ignore::pandas.errors.SettingWithCopyWarning", "ignore::FutureWarning",
+                  "ignore:.*encountered in matmul:RuntimeWarning"]
 
 [tool.pyright]
 venvPath = "."

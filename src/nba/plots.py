@@ -213,7 +213,7 @@ def evaluation(summary: pd.DataFrame, seasons: str = "2010-2025"):
         ax.grid(axis="y", visible=False)
         ax.tick_params(axis="y", length=0)
         ax.set_xlim(min(0, vals.min() * 1.35), max(vals.max(), 0.01) * 1.35)
-    fig.suptitle("Scored on unseen seasons, the forecast is far less certain",
+    fig.suptitle("On seasons it never saw, the forest's fit drops sharply",
                  x=0.01, ha="left", fontweight="bold", fontsize=13)
     fig.text(0.01, 0.9, f"Seasons {seasons} · grey = model evaluated on seasons it was trained on",
              color=INK_2, fontsize=10)

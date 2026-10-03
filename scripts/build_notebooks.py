@@ -193,8 +193,8 @@ The report's headline (*the random forest picks the league leader in 13 of 20 se
 trained on those same 20 seasons. This notebook asks the question a forecaster cares about:
 **how well does the method do on a season it has never seen?**
 
-- **Walk-forward backtest**: for each season 2010-2025, train only on earlier seasons, then predict that season.
-- **Baseline**: "every team repeats last season's win %".
+- **Walk-forward test**: for each season 2010-2025, train only on earlier seasons, then predict that season from its own box scores. This measures fit on unseen seasons, not pre-season forecasting (the season's stats are not known in advance).
+- **Reference**: "every team repeats last season's win %". It only uses pre-season information, so it is a point of scale, not a fair benchmark.
 - **Corrected data**: re-run everything with the cleaning fixes from the audit log at the bottom."""),
     (code, SETUP + "\nfrom sklearn.linear_model import LinearRegression\nfrom nba import model as m"),
     (code, '''FIRST = 2010
@@ -225,11 +225,11 @@ chart.index = ["Random forest, in-sample (report)", "Random forest, walk-forward
 fig = plots.evaluation(chart, seasons=f"{FIRST}-2025"); plots.save(fig, "evaluation");'''),
     (md, """**Reading the table**
 - In-sample, the forest explains ~89% of win % and picks 11 of 16 leaders. It is largely recalling seasons it trained on.
-- Walk-forward, it explains ~42% and picks 3 of 16, fewer than the naive baseline's 5. The simpler **OLS generalises better** (R² ≈ 0.50, 7 of 16).
-- On R², win error and rank error, both models beat the baseline (R² ≈ 0.23): box scores and prior awards carry real signal, just less than the report's headline suggests.
+- Walk-forward, it explains ~42% and picks 3 of 16. The simpler **OLS generalises better** (R² ≈ 0.50, 7 of 16).
+- Both models beat the repeat-last-season reference (R² ≈ 0.23), but they see the season's own box scores and the reference does not, so this is not evidence of forecasting skill.
 - The cleaning fixes move these results by less than the season-to-season noise.
 
-This flips one of the report's conclusions (random forest > OLS). Choosing the model with a time-based backtest is the first thing to change in a v2."""),
+This flips one of the report's conclusions (random forest > OLS). Choosing the model with a time-based test, and backtesting the full projection pipeline, are the first things to change in a v2."""),
     (md, """## Audit log: issues found while porting the original notebooks
 
 | Issue | Effect | Fix |
